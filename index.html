@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Organize movies, series, and custom watchlists with a dark cinematic visual identity. 100% offline, privacy-first Android application.">
+  <meta name="theme-color" content="#0C0D11">
+  <meta property="og:title" content="What to Watch? — Cinematic Personal Library for Android">
+  <meta property="og:description" content="Organize movies, series, and personal watchlists with zero friction. 100% offline, privacy-first Android app.">
+  <meta property="og:type" content="website">
+
+  <title>What to Watch? — Cinematic Personal Library for Android</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+  <!-- Header & Navigation -->
+  <header class="site-header">
+    <div class="container nav-container">
+      <a href="./" class="logo-wrapper" aria-label="What to Watch? Home">
+        <img src="./assets/logo.svg" alt="What to Watch logo" class="logo-img" width="36" height="36">
+        <span class="logo-text">WHAT TO WATCH?</span>
+      </a>
+
+      <nav aria-label="Primary navigation">
+        <ul class="nav-links">
+          <li><a href="#features" data-i18n="navFeatures">Features</a></li>
+          <li><a href="#shared-links" data-i18n="navShared">Shared Links</a></li>
+          <li><a href="#faq" data-i18n="navFaq">FAQ</a></li>
+          <li><a href="https://github.com/Vito2211/WhatoToWatch" target="_blank" rel="noopener noreferrer" class="dynamic-repo-link" data-i18n="navGithub">GitHub</a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-actions">
+        <!-- Bilingual Switcher: English / Russian -->
+        <div class="lang-switcher" role="group" aria-label="Select Language">
+          <button type="button" class="lang-switch-btn active" data-lang="en" aria-pressed="true">EN</button>
+          <button type="button" class="lang-switch-btn" data-lang="ru" aria-pressed="false">RU</button>
+        </div>
+
+        <a href="#download" class="btn btn-primary btn-sm" data-i18n="navGetApp">Get the App</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main id="main-content">
+    <!-- Hero Section -->
+    <section class="hero-section" id="hero">
+      <div class="container hero-grid">
+        <div class="hero-content">
+          <div class="hero-badge-pill" data-i18n="heroBadge">Android Application</div>
+          <h1 class="hero-title" data-i18n="heroTitle">Your Personal Cinema Library</h1>
+          <p class="hero-subtitle" data-i18n="heroSubtitle">
+            Organize films, series, and curated watchlists with zero friction. Built with a dark cinematic visual identity, restrained amber accents, and 100% offline privacy.
+          </p>
+
+          <div class="hero-actions">
+            <!-- Configurable Google Play Button -->
+            <a href="#download" class="btn btn-google-play" aria-label="Get on Google Play">
+              <img src="./assets/google-play-badge.svg" alt="" class="google-play-icon" width="22" height="22">
+              <span class="play-text-group">
+                <span class="play-text-tiny">GET IT ON</span>
+                <span class="play-text-brand">Google Play</span>
+              </span>
+            </a>
+
+            <a href="#shared-links" class="btn btn-secondary" data-i18n="heroBtnShared">
+              Explore Shared Links
+            </a>
+
+            <a href="https://github.com/Vito2211/WhatoToWatch" target="_blank" rel="noopener noreferrer" class="btn btn-secondary dynamic-repo-link" data-i18n="heroBtnGithub">
+              View on GitHub
+            </a>
+          </div>
+        </div>
+
+        <!-- Visual Mockup / Library Card Preview -->
+        <div class="mockup-container" aria-hidden="true">
+          <div class="mockup-phone-frame">
+            <div class="mockup-app-header">
+              <span class="mockup-header-title">
+                <img src="./assets/logo.svg" alt="" width="20" height="20">
+                <span data-i18n="mockupHeader">Library Preview</span>
+              </span>
+              <span class="mockup-badge-offline" data-i18n="mockupBadgeOffline">100% Local Storage</span>
+            </div>
+
+            <div class="mockup-item-list">
+              <!-- Item 1 -->
+              <div class="mockup-card">
+                <div class="mockup-card-top">
+                  <div>
+                    <span class="mockup-item-name" data-i18n="mockupItem1Title">Inception (2010)</span>
+                    <span class="mockup-item-type" data-i18n="mockupItem1Type">Movie</span>
+                  </div>
+                  <span class="status-badge status-watched" data-i18n="statusWatched">Watched</span>
+                </div>
+                <p class="mockup-item-notes" data-i18n="mockupItem1Notes">
+                  Christopher Nolan mind-bender. Mind-blowing sound design.
+                </p>
+              </div>
+
+              <!-- Item 2 -->
+              <div class="mockup-card">
+                <div class="mockup-card-top">
+                  <div>
+                    <span class="mockup-item-name" data-i18n="mockupItem2Title">Severance (Season 2)</span>
+                    <span class="mockup-item-type" data-i18n="mockupItem2Type">Series</span>
+                  </div>
+                  <span class="status-badge status-watching" data-i18n="statusWatching">Watching</span>
+                </div>
+                <p class="mockup-item-notes" data-i18n="mockupItem2Notes">
+                  Episode 4 next up. Unbelievable cinematography.
+                </p>
+              </div>
+
+              <!-- Item 3 -->
+              <div class="mockup-card">
+                <div class="mockup-card-top">
+                  <div>
+                    <span class="mockup-item-name" data-i18n="mockupItem3Title">Dune: Part Two</span>
+                    <span class="mockup-item-type" data-i18n="mockupItem3Type">Movie</span>
+                  </div>
+                  <span class="status-badge status-not_watched" data-i18n="statusNotWatched">Not Watched</span>
+                </div>
+                <p class="mockup-item-notes" data-i18n="mockupItem3Notes">
+                  Recommended by Alex. IMAX 70mm cut.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Shared Links Landing & Preview Section -->
+    <section class="shared-section" id="shared-links">
+      <div class="container">
+        <header class="section-header">
+          <h2 class="section-title" data-i18n="sharedTitle">Received a Shared Link?</h2>
+          <p class="section-subtitle" data-i18n="sharedSubtitle">
+            Someone shared a movie or collection with you. Here is how What to Watch? handles shared links with complete privacy.
+          </p>
+        </header>
+
+        <div class="shared-card-wrapper">
+          <div class="shared-explainer-box">
+            <h3 class="explainer-title">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+              <span data-i18n="sharedExplanationTitle">How Shared Links Work</span>
+            </h3>
+            <p class="explainer-text" data-i18n="sharedExplanationText">
+              When someone shares a movie or collection from What to Watch?, the data is compressed into a compact, self-contained payload. There is no central server holding your data — it travels directly between you and the sender.
+            </p>
+            <div class="explainer-subnote" data-i18n="sharedNoAppNote">
+              If you don't have the What to Watch? app installed yet, you can preview the contents of your link below or install the app to import it into your personal library.
+            </div>
+
+            <!-- Manual Link/Payload Tester & Previewer -->
+            <div class="shared-input-group">
+              <label for="share-input-text" class="shared-input-label" data-i18n="sharedInputLabel">
+                Paste a shared link or payload code here:
+              </label>
+              <div class="shared-input-row">
+                <input type="text" id="share-input-text" class="shared-input-text" placeholder="whattowatch://share/... or payload string" data-i18n-placeholder="sharedInputPlaceholder" autocomplete="off" spellcheck="false">
+                <button type="button" id="share-btn-decode" class="btn btn-primary" data-i18n="sharedBtnDecode">
+                  Preview Shared Content
+                </button>
+                <button type="button" id="share-btn-clear" class="btn btn-secondary" data-i18n="sharedBtnClear">
+                  Clear
+                </button>
+              </div>
+            </div>
+
+            <div class="shared-privacy-badge">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              <span data-i18n="sharedPrivacyBadge">Privacy Guarantee: Decompressed entirely in your browser memory. Never uploaded to any server.</span>
+            </div>
+
+            <div id="share-error" class="shared-error-box" role="alert"></div>
+          </div>
+
+          <!-- Dynamic Shared Payload Preview Container -->
+          <div id="share-preview-card" class="preview-card-container" role="region" aria-live="polite">
+            <div class="preview-header">
+              <div class="preview-meta-row">
+                <span id="payload-type-badge" class="status-badge badge-single">Single Item</span>
+                <span id="payload-summary" class="preview-summary">1 item</span>
+              </div>
+              <h3 id="payload-title" class="preview-title">Shared Watchlist</h3>
+            </div>
+
+            <div id="payload-items-list" class="payload-items-container">
+              <!-- Dynamically populated via share.js -->
+            </div>
+
+            <div class="preview-actions-row">
+              <a href="#" id="payload-open-app-btn" class="btn btn-primary" data-i18n="previewOpenAppBtn">
+                Open in App (whattowatch://)
+              </a>
+              <a href="#download" class="btn btn-secondary" data-i18n="previewAppNotInstalledBtn">
+                Install App to Import
+              </a>
+            </div>
+
+            <p class="preview-disclaimer">
+              * Note: Opening via whattowatch:// works if the app is installed on your Android device. Once Android App Links are verified with a custom domain, standard web links will automatically open directly in the app.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- App Features Section -->
+    <section class="features-section" id="features">
+      <div class="container">
+        <header class="section-header">
+          <h2 class="section-title" data-i18n="featuresTitle">Crafted for True Film Enthusiasts</h2>
+          <p class="section-subtitle" data-i18n="featuresSubtitle">
+            Everything you need to catalog, track, and share your cinematic journey without clutter or surveillance.
+          </p>
+        </header>
+
+        <div class="features-grid">
+          <!-- Feature 1 -->
+          <article class="feature-card">
+            <div class="feature-icon-box" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/></svg>
+            </div>
+            <h3 class="feature-title" data-i18n="feat1Title">Cinematic Organization</h3>
+            <p class="feature-desc" data-i18n="feat1Desc">
+              Catalog films, TV shows, and video links with custom categories, detailed personal impressions, and clear watch statuses.
+            </p>
+          </article>
+
+          <!-- Feature 2 -->
+          <article class="feature-card">
+            <div class="feature-icon-box" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+            </div>
+            <h3 class="feature-title" data-i18n="feat2Title">Thematic Collections</h3>
+            <p class="feature-desc" data-i18n="feat2Desc">
+              Create tailored lists like "Weekend Marathon", "Director Retrospectives", or "Recommendations from Friends".
+            </p>
+          </article>
+
+          <!-- Feature 3 -->
+          <article class="feature-card">
+            <div class="feature-icon-box" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+            </div>
+            <h3 class="feature-title" data-i18n="feat3Title">Peer-to-Peer Sharing</h3>
+            <p class="feature-desc" data-i18n="feat3Desc">
+              Share single titles or complete collections directly via lightweight data links or portable files. No cloud accounts required.
+            </p>
+          </article>
+
+          <!-- Feature 4 -->
+          <article class="feature-card">
+            <div class="feature-icon-box" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <h3 class="feature-title" data-i18n="feat4Title">Offline &amp; Private by Design</h3>
+            <p class="feature-desc" data-i18n="feat4Desc">
+              Your database stays strictly on your device. Zero telemetry, no ads, no trackers, and no mandatory cloud registration.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Technical & FAQ Section -->
+    <section class="faq-section" id="faq">
+      <div class="container">
+        <header class="section-header">
+          <h2 class="section-title" data-i18n="faqTitle">Frequently Asked Questions</h2>
+          <p class="section-subtitle" data-i18n="faqSubtitle">
+            Transparent details on architecture, data privacy, and upcoming releases.
+          </p>
+        </header>
+
+        <div class="faq-list">
+          <div class="faq-item">
+            <h3 class="faq-question" data-i18n="faq1Question">Why doesn't the website automatically open the Android app yet?</h3>
+            <p class="faq-answer" data-i18n="faq1Answer">
+              Android App Links require domain ownership verification via a digital asset file (assetlinks.json) hosted on a production HTTPS domain. GitHub Pages project sites (github.io) do not automatically enable universal app links without specific root domain configuration. Direct in-app importing works via the whattowatch:// deep link scheme once installed.
+            </p>
+          </div>
+
+          <div class="faq-item">
+            <h3 class="faq-question" data-i18n="faq2Question">Where is my movie data stored?</h3>
+            <p class="faq-answer" data-i18n="faq2Answer">
+              100% locally on your Android device using SQLite and Room. What to Watch? has no remote database, no user accounts, and no background tracking. Your data is yours alone.
+            </p>
+          </div>
+
+          <div class="faq-item">
+            <h3 class="faq-question" data-i18n="faq3Question">Can I backup or transfer my watchlists?</h3>
+            <p class="faq-answer" data-i18n="faq3Answer">
+              Yes. The app includes built-in JSON backup and restore capabilities, as well as exportable .whattowatch files that can be sent over any messenger, email, or drive.
+            </p>
+          </div>
+
+          <div class="faq-item">
+            <h3 class="faq-question" data-i18n="faq4Question">When will the app be available on Google Play?</h3>
+            <p class="faq-answer" data-i18n="faq4Answer">
+              The app is currently in preparation for release. You can monitor the open-source repository on GitHub for APK releases and announcement of the Google Play Store listing.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Download Banner CTA -->
+    <section class="cta-banner-section" id="download">
+      <div class="container cta-banner-content">
+        <h2 class="cta-banner-title" data-i18n="ctaTitle">Ready to curate your cinema journey?</h2>
+        <p class="cta-banner-subtitle" data-i18n="ctaSubtitle">
+          Download What to Watch? for Android and experience cinema organization the way it was meant to be.
+        </p>
+
+        <div class="cta-actions">
+          <a href="#download" class="btn btn-google-play" aria-label="Get on Google Play">
+            <img src="./assets/google-play-badge.svg" alt="" class="google-play-icon" width="22" height="22">
+            <span class="play-text-group">
+              <span class="play-text-tiny">GET IT ON</span>
+              <span class="play-text-brand">Google Play</span>
+            </span>
+          </a>
+
+          <a href="https://github.com/Vito2211/WhatoToWatch" target="_blank" rel="noopener noreferrer" class="btn btn-secondary dynamic-repo-link" data-i18n="ctaSourceCode">
+            Source Code on GitHub
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container footer-container">
+      <div class="logo-wrapper">
+        <img src="./assets/logo.svg" alt="" class="logo-img" width="24" height="24">
+        <span>WHAT TO WATCH?</span>
+      </div>
+
+      <p data-i18n="footerTagline">Cinematic personal library for Android.</p>
+      <p data-i18n="footerNotice">Free &amp; Open Source. No backend, no cookies, no tracking scripts, no third-party APIs.</p>
+
+      <ul class="footer-links">
+        <li><a href="https://github.com/Vito2211/WhatoToWatch" target="_blank" rel="noopener noreferrer" class="dynamic-repo-link">GitHub Repository</a></li>
+        <li><a href="#features" data-i18n="navFeatures">Features</a></li>
+        <li><a href="#shared-links" data-i18n="navShared">Shared Links</a></li>
+        <li><a href="#faq" data-i18n="navFaq">FAQ</a></li>
+      </ul>
+
+      <p class="footer-copyright" data-i18n="footerCopyright">What to Watch? Project. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Modal Dialog: Google Play Coming Soon -->
+  <div id="play-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="modal-title">
+    <div class="modal-window">
+      <div class="modal-header">
+        <h3 id="modal-title" class="modal-title" data-i18n="modalTitle">Google Play Release Coming Soon</h3>
+        <button type="button" id="modal-close-btn" class="modal-close-btn" aria-label="Close dialog">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p data-i18n="modalBody">
+          What to Watch? is currently finalizing its release pipeline for the Google Play Store. The application package name is com.vp.whattowatch.
+        </p>
+        <p data-i18n="modalFollow">
+          In the meantime, you can follow progress, view source code, and download preview builds directly from the GitHub repository:
+        </p>
+      </div>
+      <div class="modal-actions">
+        <a href="https://github.com/Vito2211/WhatoToWatch" target="_blank" rel="noopener noreferrer" class="btn btn-primary dynamic-repo-link" data-i18n="modalBtnGithub">
+          Go to GitHub Repository
+        </a>
+        <button type="button" id="modal-dismiss-btn" class="btn btn-secondary" data-i18n="modalBtnClose">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="./js/config.js"></script>
+  <script src="./js/i18n.js"></script>
+  <script src="./js/share.js"></script>
+  <script src="./js/main.js"></script>
+</body>
+</html>
