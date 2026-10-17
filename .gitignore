@@ -1,0 +1,23 @@
+# Operating System Files
+.DS_Store
+.DS_Store?
+._*
+[Tt]humbs.db
+ehthumbs.db
+[Dd]esktop.ini
+
+# Editor and IDE Files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Temporary and Log Files
+*.log
+*.tmp
+*.temp
+.cache/
+
+# Node / Dependencies (if any added in future)
+node_modules/
