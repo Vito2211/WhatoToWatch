@@ -484,6 +484,38 @@ async function runAllTests() {
     });
   });
 
+  await itAsync('Decodes full Android-generated HTTPS share URL end-to-end and sets app deep link button', async () => {
+    const fix = fixtures.single_item_en;
+    assert.ok(fix, 'single_item_en fixture exists');
+    const androidGeneratedHttpsUrl = `https://vito2211.github.io/WhatoToWatch/#share/${fix.encoded}`;
+
+    // Extract payload from full Android HTTPS URL
+    const extracted = manager.extractPayload(androidGeneratedHttpsUrl);
+    assert.strictEqual(extracted, fix.encoded);
+
+    // Process extracted string
+    await manager.processEncodedString(extracted, false);
+
+    // Verify preview card elements populated
+    const titleEl = document.getElementById('payload-title');
+    assert.strictEqual(titleEl.textContent, fix.expectedTitle);
+
+    // Verify Open in App button points to whattowatch:// deep link
+    const directBtn = document.getElementById('payload-open-app-btn');
+    assert.strictEqual(directBtn.href, `whattowatch://share/${fix.encoded}`);
+  });
+
+  await itAsync('Decodes full legacy whattowatch:// deep link URL end-to-end', async () => {
+    const fix = fixtures.single_item_en;
+    const legacyUrl = `whattowatch://share/${fix.encoded}`;
+    const extracted = manager.extractPayload(legacyUrl);
+    assert.strictEqual(extracted, fix.encoded);
+
+    await manager.processEncodedString(extracted, false);
+    const titleEl = document.getElementById('payload-title');
+    assert.strictEqual(titleEl.textContent, fix.expectedTitle);
+  });
+
   console.log('\n------------------------------------------------------');
   console.log(` Results: ${passedTests}/${totalTests} tests passed successfully!`);
   console.log('------------------------------------------------------\n');
