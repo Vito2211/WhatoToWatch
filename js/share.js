@@ -27,7 +27,7 @@ class ShareManager {
    */
   extractPayload(input) {
     if (!input || !input.trim()) return null;
-    const str = input.trim();
+    const str = input.trim().replace(/^["'`]|["'`]$/g, "").trim();
 
     // 1. Full URI parsing (http, https, whattowatch)
     if (/^(https?|whattowatch):\/\//i.test(str)) {
@@ -51,10 +51,11 @@ class ShareManager {
           if (hashPayload) return hashPayload;
         }
 
-        // Check pathname (e.g. whattowatch://share/<encoded> or /share/<encoded>)
+        // Check pathname (e.g. whattowatch://share/<encoded>, /share/<encoded>, or /repo/share/<encoded>)
         const pathParts = url.pathname.split("/").filter(Boolean);
-        if (pathParts.length >= 2 && pathParts[0] === "share") {
-          return this.sanitizeEncodedString(pathParts[1]);
+        const shareIdx = pathParts.indexOf("share");
+        if (shareIdx !== -1 && pathParts.length > shareIdx + 1) {
+          return this.sanitizeEncodedString(pathParts[shareIdx + 1]);
         } else if (pathParts.length === 1 && str.startsWith("whattowatch://share/")) {
           return this.sanitizeEncodedString(pathParts[0]);
         }
@@ -85,8 +86,11 @@ class ShareManager {
    */
   extractFromHash(hashString) {
     if (!hashString) return null;
-    let h = hashString.replace(/^#\/?/, ""); // Strip leading # and optional leading /
+    let h = hashString.replace(/^#[!/?]*/, ""); // Strip leading # and optional !, /, ?
 
+    if (h.startsWith("?")) {
+      h = h.substring(1);
+    }
     if (h.startsWith("share/")) {
       return this.sanitizeEncodedString(h.substring(6));
     }
@@ -96,7 +100,7 @@ class ShareManager {
     if (h.startsWith("share=")) {
       return this.sanitizeEncodedString(h.substring(6));
     }
-    // Direct payload in hash (typical Base64 GZIP payloads are 30+ characters without slashes)
+    // Direct payload in hash (typical Base64 GZIP payloads are 16+ characters without slashes)
     if (h.length >= 16 && !h.includes("/")) {
       return this.sanitizeEncodedString(h);
     }
@@ -217,13 +221,17 @@ class ShareManager {
     }
 
     let jsonString = "";
+    const isGzip = bytes.length >= 2 && bytes[0] === 0x1f && bytes[1] === 0x8b;
 
-    // Modern browsers support native DecompressionStream('gzip')
-    if (typeof DecompressionStream !== "undefined") {
-      const stream = new Response(bytes).body.pipeThrough(new DecompressionStream("gzip"));
-      jsonString = await new Response(stream).text();
+    if (isGzip) {
+      if (typeof DecompressionStream !== "undefined") {
+        const stream = new Response(bytes).body.pipeThrough(new DecompressionStream("gzip"));
+        jsonString = await new Response(stream).text();
+      } else {
+        throw new Error("GZIP decompression is not supported in this browser.");
+      }
     } else {
-      // Fallback: If browser does not have DecompressionStream, try plain utf-8 text
+      // Direct UTF-8 JSON text (supports uncompressed payloads and .whattowatch file content)
       const decoder = new TextDecoder("utf-8");
       jsonString = decoder.decode(bytes);
     }
@@ -246,6 +254,10 @@ class ShareManager {
 
     if (!payload.type || !payload.title) {
       throw new Error("Missing required payload fields");
+    }
+
+    if (payload.type !== "SINGLE_ITEM" && payload.type !== "CUSTOM_LIST") {
+      throw new Error("Unsupported share type: " + payload.type);
     }
 
     return payload;
@@ -399,8 +411,13 @@ class ShareManager {
    * Sanitizes external URLs to permit only safe HTTP / HTTPS protocols
    */
   sanitizeUrl(urlString) {
+    if (!urlString || typeof urlString !== "string") return null;
+    let trimmed = urlString.trim();
+    if (!trimmed.includes("://") && (trimmed.startsWith("www.") || trimmed.includes("."))) {
+      trimmed = "https://" + trimmed;
+    }
     try {
-      const parsed = new URL(urlString);
+      const parsed = new URL(trimmed);
       if (parsed.protocol === "http:" || parsed.protocol === "https:") {
         return parsed.href;
       }
@@ -411,14 +428,18 @@ class ShareManager {
   }
 
   formatContentType(type) {
-    if (!type) return "";
-    const key = `type${type.charAt(0).toUpperCase() + type.slice(1).toLowerCase()}`;
-    return window.I18N ? window.I18N.t(key) : type;
+    if (!type) return window.I18N ? window.I18N.t("typeOther") : "Other";
+    const normalized = type.trim().toUpperCase();
+    const key = `type${normalized.charAt(0) + normalized.slice(1).toLowerCase()}`;
+    if (window.I18N && window.I18N.translations && window.I18N.translations.en && window.I18N.translations.en[key]) {
+      return window.I18N.t(key);
+    }
+    return window.I18N ? window.I18N.t("typeOther") : type;
   }
 
   formatStatus(status) {
-    if (!status) return "";
-    switch (status.toUpperCase()) {
+    if (!status) return window.I18N ? window.I18N.t("statusNotWatched") : "Not Watched";
+    switch (status.trim().toUpperCase()) {
       case "WATCHED":
         return window.I18N ? window.I18N.t("statusWatched") : "Watched";
       case "WATCHING":

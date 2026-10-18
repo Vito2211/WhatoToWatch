@@ -157,6 +157,30 @@ async function runAllTests() {
     assert.strictEqual(extracted, samplePayload);
   });
 
+  it('Extracts payload from GitHub Pages subpath pathname /WhatoToWatch/share/<payload>', () => {
+    const extracted = manager.extractPayload(`https://vito2211.github.io/WhatoToWatch/share/${samplePayload}`);
+    assert.strictEqual(extracted, samplePayload);
+  });
+
+  it('Extracts payload from hash variations with hashbangs and query params', () => {
+    assert.strictEqual(manager.extractPayload(`https://vito2211.github.io/WhatoToWatch/#!/share/${samplePayload}`), samplePayload);
+    assert.strictEqual(manager.extractPayload(`https://vito2211.github.io/WhatoToWatch/#/?data=${samplePayload}`), samplePayload);
+    assert.strictEqual(manager.extractPayload(`https://vito2211.github.io/WhatoToWatch/#/?share=${samplePayload}`), samplePayload);
+  });
+
+  it('Strips surrounding quotes and markdown backticks when pasted', () => {
+    assert.strictEqual(manager.extractPayload(`\`${samplePayload}\``), samplePayload);
+    assert.strictEqual(manager.extractPayload(`"${samplePayload}"`), samplePayload);
+    assert.strictEqual(manager.extractPayload(`'${samplePayload}'`), samplePayload);
+  });
+
+  it('Sanitizes un-prefixed web URLs by adding https:// scheme', () => {
+    assert.strictEqual(manager.sanitizeUrl('www.imdb.com/title/tt1375666/'), 'https://www.imdb.com/title/tt1375666/');
+    assert.strictEqual(manager.sanitizeUrl('themoviedb.org/movie/123'), 'https://themoviedb.org/movie/123');
+    assert.strictEqual(manager.sanitizeUrl('https://example.com'), 'https://example.com/');
+    assert.strictEqual(manager.sanitizeUrl('javascript:alert(1)'), null);
+  });
+
   console.log('\n2. Payload Decompression & Kotlin Schema Compatibility:');
 
   await itAsync('Decodes Android Single Item payload (English with notes & URL)', async () => {
@@ -335,6 +359,129 @@ async function runAllTests() {
       const resolved = path.resolve(ROOT_DIR, rel);
       assert.ok(fs.existsSync(resolved), `Referenced path does not exist on disk: ${rel}`);
     }
+  });
+
+  console.log('\n7. Real Android-Generated Payloads Compatibility Suite:');
+
+  const fixturesPath = path.join(ROOT_DIR, 'tests', 'fixtures', 'android_generated_payloads.json');
+  assert.ok(fs.existsSync(fixturesPath), `Android-generated fixtures file missing at ${fixturesPath}`);
+  const fixtures = JSON.parse(fs.readFileSync(fixturesPath, 'utf8'));
+
+  await itAsync('Decodes real Android single_item_en fixture and verifies full structure', async () => {
+    const fix = fixtures.single_item_en;
+    assert.ok(fix, 'single_item_en fixture exists');
+    const decoded = await manager.decodeAndDecompress(fix.encoded);
+    assert.strictEqual(decoded.title, fix.expectedTitle);
+    assert.strictEqual(decoded.type, fix.expectedType);
+    assert.strictEqual(decoded.contents.length, fix.expectedContentsCount);
+    assert.strictEqual(decoded.categories.length, fix.expectedCategoriesCount);
+    assert.strictEqual(decoded.contents[0].title, 'Inception');
+    assert.strictEqual(decoded.contents[0].watchStatus, 'WATCHED');
+    assert.strictEqual(decoded.contents[0].contentType, 'MOVIE');
+    assert.ok(decoded.contents[0].externalUrl.startsWith('https://www.imdb.com'));
+
+    // Test DOM rendering
+    await manager.processEncodedString(fix.encoded, false);
+    assert.strictEqual(document.getElementById('payload-title').textContent, 'Inception');
+  });
+
+  await itAsync('Decodes real Android custom_list_multi fixture with multiple content types', async () => {
+    const fix = fixtures.custom_list_multi;
+    assert.ok(fix, 'custom_list_multi fixture exists');
+    const decoded = await manager.decodeAndDecompress(fix.encoded);
+    assert.strictEqual(decoded.title, fix.expectedTitle);
+    assert.strictEqual(decoded.type, fix.expectedType);
+    assert.strictEqual(decoded.contents.length, fix.expectedContentsCount);
+    assert.strictEqual(decoded.categories.length, fix.expectedCategoriesCount);
+
+    const types = decoded.contents.map(c => c.contentType);
+    assert.ok(types.includes('SERIES'));
+    assert.ok(types.includes('MOVIE'));
+    assert.ok(types.includes('VIDEO'));
+
+    await manager.processEncodedString(fix.encoded, false);
+    assert.strictEqual(document.getElementById('payload-title').textContent, 'Weekend Watchlist 🎬');
+  });
+
+  await itAsync('Decodes real Android russian_unicode_emoji fixture with zero mojibake', async () => {
+    const fix = fixtures.russian_unicode_emoji;
+    assert.ok(fix, 'russian_unicode_emoji fixture exists');
+    const decoded = await manager.decodeAndDecompress(fix.encoded);
+    assert.strictEqual(decoded.title, fix.expectedTitle);
+    assert.strictEqual(decoded.contents.length, fix.expectedContentsCount);
+    assert.strictEqual(decoded.contents[0].title, 'Интерстеллар 🚀');
+    assert.ok(decoded.contents[0].description.includes('продовольственному кризису'));
+    assert.strictEqual(decoded.categories[0].name, 'Фантастика');
+    assert.strictEqual(decoded.categories[1].name, 'Ужасы');
+
+    // Test DOM rendering with Russian locale
+    window.I18N.currentLang = 'ru';
+    await manager.processEncodedString(fix.encoded, false);
+    assert.strictEqual(document.getElementById('payload-title').textContent, 'Шедевры мирового кино 🍿 ★');
+    window.I18N.currentLang = 'en'; // restore
+  });
+
+  await itAsync('Decodes real Android missing_optional_fields fixture without throwing', async () => {
+    const fix = fixtures.missing_optional_fields;
+    assert.ok(fix, 'missing_optional_fields fixture exists');
+    const decoded = await manager.decodeAndDecompress(fix.encoded);
+    assert.strictEqual(decoded.title, fix.expectedTitle);
+    assert.strictEqual(decoded.contents[0].description, null);
+    assert.strictEqual(decoded.contents[0].externalUrl, null);
+    assert.strictEqual(decoded.categories.length, 0);
+
+    // Verify rendering handles null descriptions and URLs cleanly
+    await manager.processEncodedString(fix.encoded, false);
+  });
+
+  await itAsync('Decodes real Android empty_descriptions_and_links fixture cleanly', async () => {
+    const fix = fixtures.empty_descriptions_and_links;
+    assert.ok(fix, 'empty_descriptions_and_links fixture exists');
+    const decoded = await manager.decodeAndDecompress(fix.encoded);
+    assert.strictEqual(decoded.title, fix.expectedTitle);
+    await manager.processEncodedString(fix.encoded, false);
+  });
+
+  await itAsync('Decodes real Android multilingual_japanese fixture with Kanji, Kana, and Dragon emoji', async () => {
+    const fix = fixtures.multilingual_japanese;
+    assert.ok(fix, 'multilingual_japanese fixture exists');
+    const decoded = await manager.decodeAndDecompress(fix.encoded);
+    assert.strictEqual(decoded.title, fix.expectedTitle);
+    assert.strictEqual(decoded.contents[0].title, '千と千尋の神隠し (Spirited Away)');
+    assert.ok(decoded.contents[0].description.includes('宮崎駿'));
+    assert.strictEqual(decoded.categories[0].name, 'アニメ');
+  });
+
+  await itAsync('Rejects real Android unsupported_future_version fixture with clear error', async () => {
+    const fix = fixtures.unsupported_future_version;
+    assert.ok(fix, 'unsupported_future_version fixture exists');
+    await assert.rejects(async () => {
+      await manager.decodeAndDecompress(fix.encoded);
+    }, /Unsupported sharing version 99/);
+  });
+
+  await itAsync('Decodes real uncompressed raw JSON payload fallback', async () => {
+    const fix = fixtures.uncompressed_raw_json;
+    assert.ok(fix, 'uncompressed_raw_json fixture exists');
+    const decoded = await manager.decodeAndDecompress(fix.encoded);
+    assert.strictEqual(decoded.title, fix.expectedTitle);
+    assert.strictEqual(decoded.contents[0].title, 'Raw JSON Item');
+  });
+
+  await itAsync('Rejects real corrupted_base64 fixture with decoding error', async () => {
+    const fix = fixtures.corrupted_base64;
+    assert.ok(fix, 'corrupted_base64 fixture exists');
+    await assert.rejects(async () => {
+      await manager.decodeAndDecompress(fix.encoded);
+    });
+  });
+
+  await itAsync('Rejects real corrupted_gzip fixture with decompression error', async () => {
+    const fix = fixtures.corrupted_gzip;
+    assert.ok(fix, 'corrupted_gzip fixture exists');
+    await assert.rejects(async () => {
+      await manager.decodeAndDecompress(fix.encoded);
+    });
   });
 
   console.log('\n------------------------------------------------------');
